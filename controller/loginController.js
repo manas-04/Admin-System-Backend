@@ -133,9 +133,20 @@ module.exports.validate = (req,res) => {
             });
         }else{
             if(result){
+                const token = jwt.sign({ userId: result.userId }, process.env.SECRET_KEY, {
+                    expiresIn: "5 min",
+                });   
+                if (!token){
+                    return res.status(500).json({
+                      msg: "Internal server error.",
+                      error:err,
+                    });
+                }else{
                     return res.status(200).json({
-                        msg:"Valid Token."
+                        msg:"Valid Token.",
+                        newToken:token
                     });  
+                }          
             }else{
                 return res.status(403).json({
                     msg:"Invalid Token, Please Login Again."
